@@ -37,9 +37,20 @@ public class ModelController
 		students.add(student);
 	}
 	
+	public void addTeacher(Teacher teacher)
+	{
+		teachers.add(teacher);
+	}
+	
 	public void createCourse(Course course, Teacher teacher)
 	{
 		courses.add(course);
 		teachers.add(teacher);
 	}
+	
+	public boolean seatsFull(Course course)
+	{
+		return course.isFull();
+	}
+	
 }

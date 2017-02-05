@@ -15,6 +15,7 @@ public class Student extends Person
 	
 	public void addRegistration(Course course)
 	{
+		course.registerStudent();
 		registeredCourses.add(course);
 	}
 	
@@ -26,6 +27,7 @@ public class Student extends Person
 	public void removeRegistration(Course course)
 	{
 		registeredCourses.remove(course);
+		course.unregisterStudent();
 	}
 	
 	@Override

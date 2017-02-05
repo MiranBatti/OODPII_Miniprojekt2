@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import models.Course;
 import models.Student;
 import models.Teacher;
@@ -29,6 +30,8 @@ public class ViewWindow
 	private TableColumn<Course, String> courseIDTable;
 	@FXML
 	private TableColumn<Course, String> courseNameTable;
+	@FXML
+	private Label validateFull;
 	
 	@FXML
 	private ListView<Teacher> teacherList;
@@ -112,28 +115,37 @@ public class ViewWindow
 
         if (selectedIndex >= 0) {
             Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
-    		try
-    		{
-    	        // Load the fxml file and create a new stage for the popup dialog.
-    			FXMLLoader loader = new FXMLLoader();	 
-    			loader.setLocation(getClass().getResource("student_registration.fxml"));
-    	        AnchorPane page = (AnchorPane) loader.load();
+	    		try
+	    		{
+	    	        if(App.getModelController().seatsFull(selectedCourse) != true)
+	    	        {
+	    	        // Load the fxml file and create a new stage for the popup dialog.
+	    			FXMLLoader loader = new FXMLLoader();	 
+	    			loader.setLocation(getClass().getResource("student_registration.fxml"));
+	    	        AnchorPane page = (AnchorPane) loader.load();
+	    	        
+	    	        // Create the dialog Stage.
+	    	        Stage dialogStage = new Stage();
+	    	        dialogStage.setTitle("Register Student");
+	    	        dialogStage.initModality(Modality.WINDOW_MODAL);
+	    	        Scene scene = new Scene(page);
+	    	        dialogStage.setScene(scene);
+	    	        
+	    	        RegisterStudentController controller = loader.getController();
+	    	        controller.setDialogStage(dialogStage);
+	    	        
+	    	        // Show the dialog and wait until the user closes it
+	    	        dialogStage.showAndWait();
+	    	        
+	    	        if(controller.getNewStudent() != null && App.getModelController().seatsFull(selectedCourse) != true)
+	    	        {
+	    	        	studentList.getItems().add(controller.getNewStudent());
+	    	        }
+    	        } else
+    	        {
+    	        	validateFull.setText("Full!");
+    	        }
     	        
-    	        // Create the dialog Stage.
-    	        Stage dialogStage = new Stage();
-    	        dialogStage.setTitle("Register Student");
-    	        dialogStage.initModality(Modality.WINDOW_MODAL);
-    	        Scene scene = new Scene(page);
-    	        dialogStage.setScene(scene);
-    	        
-    	        RegisterStudentController controller = loader.getController();
-    	        controller.setDialogStage(dialogStage);
-    	        controller.setCourseList(App.getModelController());
-    	        
-    	        // Show the dialog and wait until the user closes it
-    	        dialogStage.showAndWait();
-    	        
-    	        studentList.getItems().add(controller.getNewStudent());
     		} catch (IOException e1)
     		{
     			e1.printStackTrace();

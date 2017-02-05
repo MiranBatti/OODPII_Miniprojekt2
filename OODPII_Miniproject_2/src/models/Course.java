@@ -1,7 +1,5 @@
 package models;
 
-import java.util.ArrayList;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -13,7 +11,8 @@ public class Course
 	private String courseID;
 	private StringProperty courseNameProp;
 	private StringProperty courseIDProp;
-	private String courseDate;
+	private int availableSeats;
+	private int seatsTaken;
 	private ObservableList<Student> registeredStudents = FXCollections.observableArrayList();
 	private ObservableList<Teacher> courseTeachers = FXCollections.observableArrayList();
 	
@@ -21,6 +20,21 @@ public class Course
 	{
 		this.courseName = courseName;
 		this.courseID = courseID;
+		availableSeats = 3;
+		addTeacher(teacher);
+		
+		courseNameProp = new SimpleStringProperty();
+		courseIDProp = new SimpleStringProperty();
+		
+		courseNameProp.set(courseName);
+		courseIDProp.set(courseID);
+	}
+	
+	public Course(String courseName, String courseID, Teacher teacher, int availableSeats)
+	{
+		this.courseName = courseName;
+		this.courseID = courseID;
+		this.availableSeats = availableSeats;
 		addTeacher(teacher);
 		
 		courseNameProp = new SimpleStringProperty();
@@ -49,9 +63,25 @@ public class Course
 		return courseIDProp;
 	}
 	
-	public void registerStudent(Student student)
+	public void registerStudent()
 	{
-		registeredStudents.add(student);
+		if(seatsTaken != availableSeats)
+		{
+			seatsTaken++;
+		}
+	}
+	
+	public void unregisterStudent()
+	{
+		seatsTaken--;
+	}
+	
+	public boolean isFull()
+	{
+		if(seatsTaken == availableSeats)
+			return true;
+		else
+			return false;
 	}
 	
 	public void addTeacher(Teacher teacher)
